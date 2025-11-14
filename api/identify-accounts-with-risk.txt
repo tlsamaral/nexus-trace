@@ -1,0 +1,56 @@
+// Encontra pares (src, dst) onde uma transação X do src -> dst teria alta chance de disparar o detector
+MATCH (dst:Account)
+WITH dst,
+     size([(s)-[r:SENT]->(dst) WHERE r.ts >= datetime() - duration({hours:24}) | r]) AS fanin,
+     CASE WHEN dst.community IS NOT NULL THEN 1 ELSE 0 END AS commFlag
+WHERE fanin >= 3 OR commFlag = 1
+
+MATCH (src:Account) WHERE src <> dst
+OPTIONAL MATCH (src)-[rs:SENT]->()
+  WHERE rs.ts >= datetime() - duration({days:7})
+WITH dst, fanin, commFlag, src, coalesce(avg(rs.amount), 0.0) AS avgSrc
+
+WITH dst, src, fanin, commFlag, avgSrc,
+     CASE WHEN (toFloat(fanin) / 20.0) > 1.0 THEN 1.0 ELSE (toFloat(fanin) / 20.0) END AS fanin_norm
+
+WITH dst, src, fanin, commFlag, avgSrc, fanin_norm,
+     fanin_norm * 50.0 AS fanin_score,
+     (CASE WHEN commFlag = 1 THEN 20.0 ELSE 0.0 END) AS community_score
+
+WITH dst, src, fanin, avgSrc, fanin_score, community_score,
+     (80.0 - (fanin_score + community_score)) AS amount_score_needed
+
+WITH dst, src, fanin, avgSrc, fanin_score, community_score, amount_score_needed,
+     CASE
+       WHEN amount_score_needed <= 0 THEN 0.0
+       WHEN avgSrc <= 0.0 THEN 2000.0 * (amount_score_needed / 30.0)
+       ELSE (amount_score_needed / 30.0) * 5.0 * avgSrc
+     END AS amount_needed
+
+WHERE amount_needed > 0.0 AND amount_needed < 1000000.0
+
+RETURN
+  src.id AS src_id,
+  dst.id AS dst_id,
+  fanin,
+  avgSrc,
+  round(fanin_score,2) AS fanin_score,
+  community_score,
+  round(amount_score_needed,2) AS amount_score_needed,
+  round(amount_needed,2) AS amount_needed
+ORDER BY amount_needed ASC
+LIMIT 10;
+
+
+// Possiveis pares 
+WITH 50 AS FANIN_MAX_W, 30 AS AMOUNT_MAX_W, 20 AS COMMUNITY_W, 80 AS RISK_THRESHOLD
+MATCH (dst:Account)
+WITH dst,
+     size([(s)-[r:SENT]->(dst) WHERE r.ts >= datetime() - duration({hours:24}) | r]) AS fanin,
+     CASE WHEN dst.community IS NOT NULL THEN COMMUNITY_W ELSE 0 END AS commScore
+WITH dst, fanin, commScore,
+     (CASE WHEN fanin >= 20 THEN FANIN_MAX_W ELSE fanin * (FANIN_MAX_W/20.0) END) AS faninScore
+WHERE faninScore + commScore + AMOUNT_MAX_W >= RISK_THRESHOLD
+RETURN dst.id AS dst_id, fanin, faninScore, commScore, faninScore + commScore + AMOUNT_MAX_W AS possibleMax
+ORDER BY possibleMax DESC
+LIMIT 50;
