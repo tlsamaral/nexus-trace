@@ -9,7 +9,7 @@ def account_info(id: int):
     MATCH (a:Account {id: $id})
     OPTIONAL MATCH (a)-[s:SENT]->()
     OPTIONAL MATCH ()-[r:SENT]->(a)
-    RETURN 
+    RETURN
         a.id AS id,
         sum(s.amount) AS total_sent,
         sum(r.amount) AS total_received,
@@ -18,7 +18,8 @@ def account_info(id: int):
     """
     with get_driver().session() as session:
         rec = session.run(q, id=id).single()
-    return rec.data() if rec else {"error": "Account not found"}
+        return rec.data() if rec else {"error": "Account not found"}
+
 
 @router.get("/{id}/transactions")
 def account_transactions(id: int):
@@ -28,4 +29,5 @@ def account_transactions(id: int):
     """
     with get_driver().session() as session:
         res = session.run(q, id=id)
-    return [row.data() for row in res]
+        data = res.data()   # <-- CONSUME AQUI, dentro do with
+        return data
