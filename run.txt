@@ -1,0 +1,2 @@
+-- Criar os dados com o generate_data
+docker compose exec api python generate_data.py
