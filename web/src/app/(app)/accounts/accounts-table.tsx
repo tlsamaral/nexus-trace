@@ -163,12 +163,33 @@ export const accountColumns: ColumnDef<Account>[] = [
     accessorKey: "volume24h",
     header: "Volume 24h",
     cell: ({ row }) => (
-      <span>R$ {row.original.volume24h.toLocaleString()}</span>
+      <span>
+        {row.original.volume24h.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+          minimumFractionDigits: 2,
+        })}
+      </span>
     ),
   },
   {
     accessorKey: "lastActivity",
     header: "Última atividade",
+    cell: ({ row }) => {
+      const raw = row.original.lastActivity
+      const date = raw ? new Date(raw) : null
+      return (
+        <span>
+          {date ? date.toLocaleString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          }) : "—"}
+        </span>
+      )
+    }
   },
   {
     id: "actions",
