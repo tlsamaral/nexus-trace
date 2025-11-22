@@ -13,6 +13,7 @@ from routers.accounts import router as accounts_router
 from routers.metrics import router as metrics_router
 from routers.rules import router as rules_router
 from routers.graph import router as graph_router
+from gds_initializer import compute_graph_features
 
 app = FastAPI(title="Fraude API (Neo4j + FastAPI)")
 
@@ -23,6 +24,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+async def startup_event():
+    print("⚙️ Executando análise de comunidades (GDS)...")
+    compute_graph_features()
 
 # -----------------------------------------------------
 # HEALTHCHECK
