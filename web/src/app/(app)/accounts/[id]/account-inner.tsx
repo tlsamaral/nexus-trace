@@ -1,6 +1,18 @@
-'use client'
+"use client"
 
+import { useEffect, useState } from "react"
 import { Separator } from "@/components/ui/separator"
+import {
+  getAccountSummary,
+  getAccountGraph,
+  getAccountRiskHistory,
+  getAccountTransactions,
+  type AccountSummary,
+  type RiskPoint,
+  type GraphResponse,
+  type Transaction
+} from "@/http/accounts/account-info"
+
 import { AccountSummaryCard } from "./account-summary-card"
 import { ActivityTimeline } from "./activity-timeline"
 import { BehaviorAnomalyCards } from "./behavior-anomaly-cards"
@@ -9,86 +21,87 @@ import { GraphVisualization } from "./graph-visualization"
 import { PredictionCard } from "./prediction-card"
 import { RiskHistoryChart } from "./risk-history-chart"
 import { TransactionsTable } from "./transactions-table"
-
-const mockSummary = {
-  id: 101,
-  community: 12,
-  avgRisk24h: 72.5,
-  fanIn: 88,
-  fanOut: 12,
-  volume24h: 32400,
-  lastTransaction: "há 2 minutos",
-}
-
-const mockRiskHistory = [
-  { ts: "10:00", risk: 22 },
-  { ts: "11:00", risk: 28 },
-  { ts: "12:00", risk: 33 },
-  { ts: "13:00", risk: 49 },
-  { ts: "14:00", risk: 72 },
-  { ts: "15:00", risk: 63 },
-]
-
-const mockTransactions = Array.from({ length: 10 }).map((_, i) => ({
-  id: 1000 + i,
-  dst: 200 + i,
-  amount: Math.floor(Math.random() * 5000),
-  ts: "2025-02-01 14:23",
-  channel: ["pix", "boleto", "ted", "interno"][Math.floor(Math.random() * 4)],
-  risk: Math.floor(Math.random() * 100),
-  community_dst: [3, 8, 12, 1][Math.floor(Math.random() * 4)],
-}))
-
-const mockExplainability = {
-  total: 87,
-  fanin: 48,
-  amount: 30,
-  community: 9,
-}
-
-const mockAnomalies = [
-  {
-    title: "Crescimento brusco de fan-in",
-    description: "A conta recebeu 44 entradas nas últimas 6h (244% acima da média).",
-    severity: "high",
-  },
-  {
-    title: "Envios fora do padrão",
-    description: "Transações recentes superam o dobro do valor médio histórico.",
-    severity: "medium",
-  },
-]
-
-const mockTimeline = [
-  { ts: "Hoje • 14:32", type: "alert", text: "Transação suspeita (R$ 4.800,00)" },
-  { ts: "Hoje • 11:21", type: "info", text: "Conta entrou para a Comunidade 12" },
-  { ts: "Ontem • 19:41", type: "tx", text: "Envio para conta 887 (R$ 1.800,00)" },
-]
+import { formatCurrency, formatDate, formatInt, formatRisk } from "./account-formatters"
 
 export function AccountInner({ accountId }: { accountId: string }) {
+  const [summary, setSummary] = useState<AccountSummary | null>(null)
+  const [riskHistory, setRiskHistory] = useState<RiskPoint[]>([])
+  const [graph, setGraph] = useState<GraphResponse | null>(null)
+  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const [s, r, g, t] = await Promise.all([
+          getAccountSummary(accountId),
+          getAccountRiskHistory(accountId),
+          getAccountGraph(accountId),
+          getAccountTransactions(accountId),
+        ])
+        setSummary(s)
+        setRiskHistory(r)
+        setGraph(g)
+        setTransactions(t)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [accountId])
+
+  if (loading || !summary || !graph) {
+    return <div className="py-10 text-center text-muted-foreground">Carregando…</div>
+  }
+
+  const formattedSummary = {
+    id: summary.id,
+    community: summary.community,
+    avgRisk24h: formatRisk(summary.risk_avg),
+    fanIn: formatInt(summary.fanin),
+    fanOut: formatInt(summary.fanout),
+    volume24h: formatCurrency(summary.volume24h),
+    lastTransaction: formatDate(summary.lastActivity),
+  }
+
+  const formattedTransactions = transactions.map(t => ({
+    id: t.id,
+    dst: t.dst,
+    amount: formatCurrency(t.amount),
+    ts: formatDate(t.ts),
+    channel: t.channel ?? "—",
+    risk: t.risk ?? "—",
+    community_dst: t.dst ?? "—",
+  }))
+
+  const riskHistoryFormatted = riskHistory.map(r => ({
+    ts: formatDate(r.ts, "DD/MM/YYYY HH:mm"),
+    risk: r.risk,
+  }))
+
   return (
     <>
-      <AccountSummaryCard data={mockSummary} />
+      <AccountSummaryCard data={formattedSummary} />
 
       <Separator />
 
-      <RiskHistoryChart data={mockRiskHistory} />
+      <RiskHistoryChart data={riskHistoryFormatted} />
 
       <Separator />
 
-      <GraphVisualization />
+      <GraphVisualization accountId={accountId} />
 
       <Separator />
 
-      <TransactionsTable data={mockTransactions} />
+      <TransactionsTable data={formattedTransactions} />
 
       <Separator />
 
-      <BehaviorAnomalyCards data={mockAnomalies} />
+      <BehaviorAnomalyCards data={[]} /> {/* Deixamos vazio até criar rota */}
 
       <Separator />
 
-      <ExplainabilityCard data={mockExplainability} />
+      <ExplainabilityCard data={{ total: 0, fanin: 0, amount: 0, community: 0 }} />
 
       <Separator />
 
@@ -96,7 +109,7 @@ export function AccountInner({ accountId }: { accountId: string }) {
 
       <Separator />
 
-      <ActivityTimeline data={mockTimeline} />
+      <ActivityTimeline data={[]} /> {/* timeline depois criamos */}
     </>
   )
 }
