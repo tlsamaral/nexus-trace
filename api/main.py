@@ -13,7 +13,11 @@ from routers.accounts import router as accounts_router
 from routers.metrics import router as metrics_router
 from routers.rules import router as rules_router
 from routers.graph import router as graph_router
+
 from gds_initializer import compute_graph_features
+from utils.wait_for_neo4j import wait_for_neo4j
+
+from config import NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
 
 app = FastAPI(title="Fraude API (Neo4j + FastAPI)")
 
@@ -27,6 +31,17 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_event():
+    print("⏳ Checando disponibilidade do Neo4j...")
+
+    ok = wait_for_neo4j(
+        uri=NEO4J_URI,
+        user=NEO4J_USER,
+        password=NEO4J_PASSWORD
+    )
+
+    if not ok:
+        raise RuntimeError("Neo4j não respondeu. Abortando startup.")
+
     print("⚙️ Executando análise de comunidades (GDS)...")
     compute_graph_features()
 
