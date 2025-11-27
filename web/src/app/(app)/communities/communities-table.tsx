@@ -9,7 +9,6 @@ import {
   useReactTable
 } from "@tanstack/react-table"
 
-import { z } from "zod"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -30,26 +29,7 @@ import {
 } from "@/components/ui/table"
 
 import { IconArrowRight, IconAlertTriangle, IconCircleCheck, IconUsers } from "@tabler/icons-react"
-
-
-// ---------------------------------------
-// Schema dos dados
-// ---------------------------------------
-
-export const communitySchema = z.object({
-  id: z.number(),
-  size: z.number(),
-  total_tx: z.number(),
-  high_fanin_pct: z.number(),
-  avg_risk: z.number(),
-  status: z.enum(["Normal", "Suspeita", "Crítica"]),
-})
-
-type Community = z.infer<typeof communitySchema>
-
-// ---------------------------------------
-// Sheet de Detalhes
-// ---------------------------------------
+import { Community } from "@/http/communities/get-communities"
 
 function CommunityDetails({ community }: { community: Community }) {
   return (
