@@ -13,6 +13,9 @@ from routers.accounts import router as accounts_router
 from routers.metrics import router as metrics_router
 from routers.rules import router as rules_router
 from routers.graph import router as graph_router
+from routers.transactions import router as transactions_router
+from routers.communities import router as communities_router
+
 
 from gds_initializer import compute_graph_features
 from utils.wait_for_neo4j import wait_for_neo4j
@@ -52,9 +55,7 @@ async def startup_event():
 def health():
     return {"ok": True}
 
-# -----------------------------------------------------
-# ROTA ORIGINAL → ANALISAR TRANSAÇÃO
-# -----------------------------------------------------
+
 @app.post("/transaction")
 async def analyze_transaction(tx: Transaction):
     result = score_transaction(tx.src_account, tx.dst_account, tx.amount)
@@ -88,9 +89,7 @@ async def analyze_transaction(tx: Transaction):
         "explanation": result["explanation"]
     }
 
-# -----------------------------------------------------
-# WEBSOCKET PARA PAINEL EM TEMPO REAL
-# -----------------------------------------------------
+
 @app.websocket("/ws")
 async def ws_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
@@ -100,13 +99,13 @@ async def ws_endpoint(websocket: WebSocket):
     except WebSocketDisconnect:
         manager.disconnect(websocket)
 
-# -----------------------------------------------------
-# NOVAS ROTAS REGISTRADAS
-# -----------------------------------------------------
 app.include_router(accounts_router, prefix="/account", tags=["Accounts"])
 app.include_router(metrics_router, prefix="/metrics", tags=["Metrics"])
 app.include_router(rules_router,   prefix="/rules",   tags=["Rules"])
 app.include_router(graph_router,   prefix="/graph",   tags=["Graph"])
+app.include_router(transactions_router, prefix="/transactions", tags=["Transactions"])
+app.include_router(communities_router, prefix="/communities", tags=["Communities"])
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
