@@ -38,28 +38,8 @@ import {
   IconUser,
   IconSend,
 } from "@tabler/icons-react"
-
-// ---------------------------------------
-// Schema dos dados de transação
-// ---------------------------------------
-
-export const transactionSchema = z.object({
-  id: z.coerce.string(),
-  src: z.number(),
-  dst: z.number(),
-  amount: z.number(),
-  ts: z.string(),
-  channel: z.enum(["pix", "ted", "boleto", "interno"]),
-  risk: z.number(),
-  community_src: z.number().optional(),
-  community_dst: z.number().optional(),
-})
-
-export type Transaction = z.infer<typeof transactionSchema>
-
-// ---------------------------------------
-// Sheet de Detalhes
-// ---------------------------------------
+import { Transaction } from "@/http/transactions/get-transactions"
+import dayjs from "dayjs"
 
 function TransactionDetails({ tx }: { tx: Transaction }) {
   return (
@@ -94,7 +74,7 @@ function TransactionDetails({ tx }: { tx: Transaction }) {
 
         <div className="flex justify-between">
           <span>Data/Hora:</span>
-          <span className="font-medium">{tx.ts}</span>
+          <span className="font-medium">{dayjs(tx.ts).format("DD/MM/YYYY HH:mm:ss")}</span>
         </div>
 
         <div className="flex justify-between">
@@ -142,10 +122,6 @@ function TransactionDetails({ tx }: { tx: Transaction }) {
     </SheetContent>
   )
 }
-
-// ---------------------------------------
-// Colunas da Tabela
-// ---------------------------------------
 
 export const columns: ColumnDef<Transaction>[] = [
   {
@@ -223,10 +199,6 @@ export const columns: ColumnDef<Transaction>[] = [
     ),
   },
 ]
-
-// ---------------------------------------
-// Tabela
-// ---------------------------------------
 
 export function TransactionsTable({ data }: { data: Transaction[] }) {
   const table = useReactTable({
