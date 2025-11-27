@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { api } from "../api-client"
+import { ChannelEnum } from "../transactions/get-transactions"
 
 export const AccountSummarySchema = z.object({
   id: z.number(),
@@ -26,7 +27,7 @@ export const GraphLinkSchema = z.object({
   source: z.number(),
   target: z.number(),
   amount: z.number(),
-  channel: z.string(),
+  channel: ChannelEnum,
 })
 
 export const GraphResponseSchema = z.object({
