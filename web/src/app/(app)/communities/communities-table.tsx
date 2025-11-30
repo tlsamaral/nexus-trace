@@ -30,6 +30,7 @@ import {
 
 import { IconArrowRight, IconAlertTriangle, IconCircleCheck, IconUsers } from "@tabler/icons-react"
 import { Community } from "@/http/communities/get-communities"
+import Link from "next/link"
 
 function CommunityDetails({ community }: { community: Community }) {
   return (
@@ -84,6 +85,10 @@ function CommunityDetails({ community }: { community: Community }) {
               ✔ Nenhum comportamento fraudulento significativo detectado.
             </p>
           )}
+
+          <Button className="w-full mt-4">
+            <Link href={`/communities/${community.id}`}>Mais detalhes</Link>
+          </Button>
         </div>
       </div>
     </SheetContent>
