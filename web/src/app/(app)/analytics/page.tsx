@@ -1,8 +1,3 @@
-"use client"
-
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { AreaChart, Area, CartesianGrid, XAxis, Tooltip, BarChart, Bar, PieChart, Pie, Cell } from "recharts"
 import { Separator } from "@/components/ui/separator"
 import { AnalyticsHeaderCards } from "./analytics-header-card"
 import { ChannelUsagePie } from "./channel-usage-pie"
@@ -11,6 +6,7 @@ import { FanInOutChart } from "./fan-in-out-chart"
 import { RiskTrendChart } from "./risk-trend-chart"
 import { ScoreDistributionChart } from "./score-distribuition-chart"
 import { TopSuspiciousTable } from "./top-suspicious-table"
+import { getAnalytics } from "@/http/analytics/get-analytics"
 
 // ========= MOCK DATA ========= //
 const riskTrend = [
@@ -62,7 +58,8 @@ const topSuspicious = [
   { id: 444, risk: 74, fanin: 30, community: 1 },
 ]
 
-export default function AnalyticsPage() {
+export default async function AnalyticsPage() {
+  const { channel_usage, community_distribution, fan_in_out, risk_trend, score_distribution, top_suspicious } = await getAnalytics()
   return (
     <div className="space-y-6 p-6">
       <div>
@@ -74,17 +71,17 @@ export default function AnalyticsPage() {
 
       <Separator />
 
-      <RiskTrendChart data={riskTrend} />
+      <RiskTrendChart data={risk_trend} />
 
-      <ScoreDistributionChart data={scoreDistribution} />
+      <ScoreDistributionChart data={score_distribution} />
 
-      <ChannelUsagePie data={channelUse} colors={COLORS} />
+      <ChannelUsagePie data={channel_usage} colors={COLORS} />
 
-      <FanInOutChart data={fanInOut} />
+      <FanInOutChart data={fan_in_out} />
 
-      <CommunityDistributionPie data={communityPie} colors={COLORS} />
+      <CommunityDistributionPie data={community_distribution} colors={COLORS} />
       
-      <TopSuspiciousTable data={topSuspicious} />
+      <TopSuspiciousTable data={top_suspicious} />
     </div>
   )
 }
