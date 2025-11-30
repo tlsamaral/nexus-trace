@@ -1,22 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import {
   getCommunityDetails,
 } from "@/http/communities/get-community-details"
-
-import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-} from "recharts"
-import { CommunitySummary } from "./community-summary"
 import { CommunityDetailsContainer } from "./community-details-container"
 
 export default async function CommunityDetailsPage({ params }: { params: Promise<{ id: string }> }) {
@@ -42,7 +28,6 @@ export default async function CommunityDetailsPage({ params }: { params: Promise
       </div>
 
       <CommunityDetailsContainer communityDetails={communityDetails} />
-
     </div>
   )
 }
