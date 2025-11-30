@@ -55,13 +55,6 @@ export function RiskMetricCard({
 
       {(subtitle || trend) && (
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          {trend && (
-            <div className="flex items-center gap-1 font-medium">
-              {trendPositive ? "Trending up" : "Trending down"}
-              {trendPositive ? "📈" : "📉"}
-            </div>
-          )}
-
           {subtitle && (
             <div className="text-muted-foreground leading-tight">{subtitle}</div>
           )}
