@@ -14,9 +14,9 @@ interface AccountSummaryCardProps {
     id: number
     community: number | null
     avgRisk24h: string
-    fanIn: number
-    fanOut: number
-    volume24h: number
+    fanIn: string
+    fanOut: string
+    volume24h: string
     lastTransaction: string
   }
 }
