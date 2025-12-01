@@ -37,14 +37,13 @@ app.add_middleware(
 async def startup_event():
     print("⏳ Checando disponibilidade do Neo4j...")
 
-    ok = wait_for_neo4j(
+    # Aguarda até Neo4j ficar disponível SEM derrubar o app
+    waited = wait_for_neo4j(
         uri=NEO4J_URI,
         user=NEO4J_USER,
-        password=NEO4J_PASSWORD
+        password=NEO4J_PASSWORD,
+        timeout=150
     )
-
-    if not ok:
-        raise RuntimeError("Neo4j não respondeu. Abortando startup.")
 
     print("⚙️ Executando análise de comunidades (GDS)...")
     compute_graph_features()
