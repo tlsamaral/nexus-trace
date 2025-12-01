@@ -22,27 +22,39 @@ import { PredictionCard } from "./prediction-card"
 import { RiskHistoryChart } from "./risk-history-chart"
 import { TransactionsTable } from "./transactions-table"
 import { formatCurrency, formatDate, formatInt, formatRisk } from "./account-formatters"
+import { Anomaly, getAccountAnomalies } from "@/http/accounts/get-account-anomalies"
+import { Explainability, getAccountExplainability } from "@/http/accounts/get-account-explainability"
+import { getAccountTimeline, Timeline } from "@/http/accounts/get-account-timeline"
 
 export function AccountInner({ accountId }: { accountId: string }) {
   const [summary, setSummary] = useState<AccountSummary | null>(null)
   const [riskHistory, setRiskHistory] = useState<RiskPoint[]>([])
   const [graph, setGraph] = useState<GraphResponse | null>(null)
   const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [anomalies, setAnomalies] = useState<Anomaly[]>([])
+  const [explainability, setExplainability] = useState<Explainability | null>(null)
+  const [accountTimeline, setAccountTimeline] = useState<Timeline[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function load() {
       try {
-        const [s, r, g, t] = await Promise.all([
+        const [s, r, g, t, a, e, tl] = await Promise.all([
           getAccountSummary(accountId),
           getAccountRiskHistory(accountId),
           getAccountGraph(accountId),
           getAccountTransactions(accountId),
+          getAccountAnomalies(accountId),
+          getAccountExplainability(accountId),
+          getAccountTimeline(accountId),
         ])
         setSummary(s)
         setRiskHistory(r)
         setGraph(g)
         setTransactions(t)
+        setAnomalies(a)
+        setExplainability(e)
+        setAccountTimeline(tl)
       } finally {
         setLoading(false)
       }
@@ -65,7 +77,7 @@ export function AccountInner({ accountId }: { accountId: string }) {
   }
 
   const formattedTransactions = transactions.map(t => ({
-    id: t.id,
+    id: t.id!,
     dst: t.dst,
     amount: formatCurrency(t.amount),
     ts: formatDate(t.ts),
@@ -97,11 +109,13 @@ export function AccountInner({ accountId }: { accountId: string }) {
 
       <Separator />
 
-      <BehaviorAnomalyCards data={[]} /> {/* Deixamos vazio até criar rota */}
+      <BehaviorAnomalyCards data={anomalies} />
 
       <Separator />
 
-      <ExplainabilityCard data={{ total: 0, fanin: 0, amount: 0, community: 0 }} />
+      {explainability && (
+        <ExplainabilityCard data={explainability} />
+      )}
 
       <Separator />
 
@@ -109,7 +123,7 @@ export function AccountInner({ accountId }: { accountId: string }) {
 
       <Separator />
 
-      <ActivityTimeline data={[]} /> {/* timeline depois criamos */}
+      <ActivityTimeline data={accountTimeline} />
     </>
   )
 }
