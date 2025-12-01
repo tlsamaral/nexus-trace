@@ -3,6 +3,7 @@ import { AccountInner } from "./account-inner"
 
 export default async function AccountPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: accountId } = await params
+
   return (
     <div className="space-y-4 p-4">
       <div>
@@ -13,7 +14,6 @@ export default async function AccountPage({ params }: { params: Promise<{ id: st
       </div>
 
      <AccountInner accountId={accountId} />
-
     </div>
   )
 }
