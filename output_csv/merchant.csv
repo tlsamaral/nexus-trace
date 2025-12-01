@@ -1,101 +1,101 @@
 id,name,mcc,region
-1,Martins Ltda.,1059,Aragão
-2,da Paz,5751,Carvalho do Campo
-3,Moura,7890,Peixoto do Oeste
-4,das Neves,4765,Monteiro Paulista
-5,da Mota S.A.,7841,Camargo
-6,das Neves,6700,Fogaça
-7,Cunha,7089,Porto
-8,Vasconcelos,6418,Cavalcante de Ribeiro
-9,Castro S/A,7529,Pires
-10,Costela,3132,Gomes de da Cunha
-11,Garcia - ME,4911,Melo
-12,Novais,1622,Santos
-13,Vargas Correia e Filhos,4465,da Cruz
-14,da Paz,4456,Ribeiro de Pimenta
-15,Ferreira Oliveira e Filhos,9751,Leão
-16,da Paz,7145,da Paz da Prata
-17,Barbosa,9518,Freitas das Flores
-18,Siqueira Moura - EI,6953,Vargas
-19,Nogueira Carvalho S.A.,3292,da Rocha da Serra
-20,Pastor Sá - ME,9795,Porto
-21,Silveira S.A.,3803,Rezende do Oeste
-22,Cavalcante,6119,Marques
-23,Macedo,1277,Rocha Verde
-24,Pastor S/A,2646,Nogueira de Barros
-25,da Rosa Peixoto S.A.,3940,Cunha
-26,Gomes,3350,Lopes do Oeste
-27,Souza Lima Ltda.,1950,Costela de Lima
-28,Casa Grande Lima - ME,8279,Novais do Oeste
-29,Azevedo e Filhos,7042,Silva da Serra
-30,Mendonça S/A,7610,Ribeiro Alegre
-31,Oliveira Rocha S.A.,4276,Cassiano da Mata
-32,Machado,1034,Rodrigues Verde
-33,Vasconcelos Correia - ME,2111,Dias
-34,Aragão S.A.,5690,Guerra da Prata
-35,Rezende Melo Ltda.,7597,Campos
-36,Farias Campos Ltda.,7972,Souza de Novais
-37,Carvalho,4596,da Cruz do Sul
-38,Martins - ME,7295,da Mata do Norte
-39,Lopes Lopes - ME,5367,Nunes
-40,Carvalho Vieira - EI,4745,Novaes
-41,Pereira,2243,da Conceição da Prata
-42,Andrade,3884,Moraes
-43,das Neves,1223,Montenegro
-44,Brito,5413,Viana
-45,Barbosa Ltda.,6618,Cunha Grande
-46,da Paz,8733,Campos de Azevedo
-47,Montenegro Marques S.A.,6694,Cavalcante das Pedras
-48,Fernandes Duarte e Filhos,2657,Barros de Vasconcelos
-49,Albuquerque Caldeira S/A,9088,Pimenta
-50,Viana,8682,Mendes
-51,Pastor Silveira - ME,8893,Vasconcelos
-52,Lopes Moraes - EI,3406,Albuquerque
-53,Nogueira,8646,Almeida
-54,Machado Sales S.A.,3348,Marques
-55,Pereira,6976,da Rosa Paulista
-56,Vargas Alves S.A.,5707,Leão do Galho
-57,Cardoso,3028,da Cunha das Pedras
-58,Costa - ME,4387,Rios
-59,da Mota,3199,Ferreira de Vieira
-60,Ferreira Ltda.,5345,Campos
-61,Carvalho S/A,1745,Castro
-62,Ferreira,2715,Guerra
-63,Cavalcanti - ME,6636,Sampaio Alegre
-64,Porto S/A,8711,Araújo
-65,Cunha - EI,3590,Siqueira do Norte
-66,Borges,7731,Vasconcelos
-67,Santos,2456,Ribeiro
-68,Cavalcanti - EI,6821,Ferreira Alegre
-69,Cirino,6738,Montenegro do Sul
-70,Correia S.A.,5542,da Cruz de Minas
-71,Porto Fogaça S.A.,7362,Caldeira
-72,Sales,1789,Araújo da Mata
-73,Porto Vieira S.A.,3256,Garcia
-74,Fernandes,3251,das Neves
-75,Aragão Fonseca S.A.,3408,Rezende
-76,Lopes Camargo - EI,7213,Cavalcante
-77,Lima,3017,Rodrigues da Mata
-78,Silva,4408,Moraes Verde
-79,Pires S/A,4309,Aragão
-80,da Costa,3493,da Cunha
-81,Gonçalves Viana - ME,4547,Vieira
-82,Martins,7907,Aragão
-83,Cassiano - ME,7598,Vieira
-84,Câmara,4187,Sá do Campo
-85,Souza - EI,4144,Melo
-86,Teixeira,5942,Silva do Amparo
-87,Porto,1522,da Costa
-88,Garcia - ME,4536,Peixoto
-89,Campos,8510,Rios
-90,Pastor Fogaça e Filhos,1486,Moreira
-91,Aparecida,8529,Cardoso de Cunha
-92,Aragão,7014,Sousa de Cassiano
-93,Sá Nascimento - ME,9441,Costela
-94,Aparecida,4931,Sampaio
-95,Cavalcanti Porto Ltda.,2211,Castro do Oeste
-96,Nunes,7576,Rocha
-97,Cardoso Pastor S/A,7808,Pimenta das Flores
-98,Leão Ltda.,9432,Sampaio
-99,Casa Grande,7558,Mendes do Oeste
-100,Pacheco,9644,Brito
+1,Guerra,4019,Cirino do Norte
+2,Novais,4938,da Cunha
+3,Rodrigues,5311,Moura
+4,Sousa,1328,Sampaio das Pedras
+5,Pastor,4913,Vargas
+6,Moreira Cavalcante - EI,7057,Dias de Oliveira
+7,Abreu,6413,Gomes Paulista
+8,Andrade Ltda.,5955,Moura
+9,Oliveira - ME,2923,da Paz
+10,Correia,4460,Gomes da Praia
+11,Lima - ME,7058,Vargas
+12,Barbosa - ME,2425,Mendonça
+13,Gonçalves,2352,Andrade da Serra
+14,da Costa,5949,Lopes de Minas
+15,Leão,4574,Teixeira do Oeste
+16,Nunes,2092,das Neves
+17,Jesus e Filhos,2546,Caldeira da Praia
+18,Martins - ME,5609,Marques do Amparo
+19,Carvalho,8668,Moraes
+20,Farias Gomes - ME,2863,Costa de Araújo
+21,Vasconcelos,7985,Melo
+22,Albuquerque e Filhos,9850,Aparecida Paulista
+23,da Cunha Barbosa Ltda.,2901,Pires
+24,Rezende,5850,Cavalcanti da Prata
+25,Barbosa,3185,da Cunha
+26,Cirino - EI,6400,Caldeira de Goiás
+27,Lima Ltda.,2527,Mendonça
+28,Dias Ferreira e Filhos,6450,da Mota
+29,Marques,4359,Sá do Amparo
+30,Pacheco,1825,Fonseca
+31,Pimenta e Filhos,7320,Pimenta
+32,da Rocha Farias S.A.,5509,Viana
+33,Mendonça,6410,Dias
+34,Oliveira,8976,Moreira
+35,Garcia,3074,Sousa
+36,da Luz,8711,Ferreira Grande
+37,Fernandes Nascimento - ME,4679,da Mota das Pedras
+38,Alves - ME,5629,Fernandes de Goiás
+39,da Costa Nascimento e Filhos,1253,Albuquerque Verde
+40,da Cruz Nogueira - ME,7187,Araújo
+41,Leão,4244,Cunha
+42,Barbosa,4892,Viana Grande
+43,Moreira Silveira e Filhos,2117,Azevedo
+44,Pimenta Ltda.,1773,Borges de das Neves
+45,da Rosa,5174,Novais
+46,Cardoso - ME,1796,Sampaio da Serra
+47,da Cunha - ME,9675,Lima das Flores
+48,da Rosa e Filhos,3953,Novais
+49,Santos Ltda.,9581,Gonçalves do Galho
+50,Sousa S.A.,4857,da Rocha
+51,Macedo,3124,Nogueira dos Dourados
+52,da Rocha e Filhos,8874,Correia da Mata
+53,Silva Rios - ME,4059,Fonseca Verde
+54,Costa,7161,Leão
+55,Peixoto S.A.,2432,Caldeira do Amparo
+56,Gomes,9074,Novaes
+57,Porto Sampaio - ME,4057,Silveira
+58,Viana - EI,6865,Vasconcelos do Campo
+59,Fernandes,2891,Peixoto
+60,Silveira,5392,Andrade
+61,das Neves S.A.,6474,Farias do Campo
+62,Andrade,2314,Lima de Camargo
+63,Mendes S.A.,2362,da Mata de Duarte
+64,da Rocha,3572,da Costa
+65,Pastor,5326,Casa Grande
+66,Jesus Ltda.,3606,Castro do Sul
+67,Sá,2453,Borges do Amparo
+68,Ribeiro,6608,da Luz
+69,Silveira,1868,Porto da Serra
+70,Farias - ME,1938,da Conceição
+71,Duarte Ltda.,3466,Cirino de Cardoso
+72,Siqueira,5349,Dias do Amparo
+73,Pereira,7055,Mendonça
+74,da Rocha Ltda.,7649,Cardoso
+75,Nunes Ltda.,5080,Macedo da Praia
+76,Campos - EI,1861,Campos
+77,Silveira,7653,Borges
+78,Jesus,7794,Sá
+79,Nascimento,1162,da Cunha Verde
+80,Albuquerque Ribeiro S/A,3970,Câmara da Prata
+81,Pacheco,3800,Sá Grande
+82,Machado - EI,2709,da Paz
+83,Novaes Araújo Ltda.,6108,Santos
+84,Rios Duarte S/A,5635,Moura
+85,Vargas Macedo S/A,8946,da Conceição de Novaes
+86,Pires,3498,Correia
+87,Costa,1938,Alves da Serra
+88,Montenegro,3950,Machado
+89,da Cunha,1817,Marques de Brito
+90,Moreira,7117,Peixoto
+91,Mendonça S/A,7067,Pacheco de Souza
+92,Pereira,3280,Carvalho Verde
+93,da Luz,3680,da Cunha de Lima
+94,Brito,7099,Nunes
+95,Cavalcanti S/A,1186,Campos Alegre
+96,Sá,6554,Fogaça
+97,Montenegro,3851,Leão Verde
+98,Rocha,1981,Azevedo do Galho
+99,Cavalcante Guerra S.A.,8042,Nunes
+100,Rezende,4109,Vieira de Goiás
