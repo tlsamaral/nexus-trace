@@ -8,7 +8,6 @@ import {
   IconSettings,
   IconBolt,
   IconWallet,
-  IconChartBar,
   IconHelp,
   IconSearch,
 } from "@tabler/icons-react"
@@ -60,23 +59,18 @@ const data = {
       url: "/rules",
       icon: IconBolt,
     },
-    {
-      title: "Analytics",
-      url: "/analytics",
-      icon: IconChartBar,
-    },
+    // {
+    //   title: "Analytics",
+    //   url: "/analytics",
+    //   icon: IconChartBar,
+    // },
   ],
 
   navSecondary: [
     {
       title: "Configurações",
-      url: "/settings",
+      url: "/rules",
       icon: IconSettings,
-    },
-    {
-      title: "Ajuda",
-      url: "/help",
-      icon: IconHelp,
     },
     {
       title: "Buscar",
