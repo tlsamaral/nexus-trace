@@ -143,3 +143,53 @@ def get_risk_transactions():
         ]
 
         return result
+
+
+@router.get("/recent-suspicions")
+def recent_suspicions():
+    with get_driver().session() as session:
+
+        query = """
+        MATCH (src:Account)-[s:SENT]->(dst:Account)
+        WHERE s.ts >= datetime() - duration('P1D')
+
+        OPTIONAL MATCH ()-[r:SENT]->(dst)
+        WITH src, dst, s, count(r) AS fanin
+
+        WITH 
+            src, dst, s, fanin,
+            CASE
+                WHEN s.amount >= 8000 AND fanin >= 20 THEN "High-value & High-FanIn"
+                WHEN dst.risk_score >= 85 THEN "High Risk Score"
+                WHEN fanin >= 30 THEN "FanIn Spike"
+                ELSE null
+            END AS reason
+
+        WHERE reason IS NOT NULL
+
+        RETURN
+            dst.id AS account,
+            dst.community AS community,
+            fanin,
+            s.amount AS amount,
+            s.channel AS channel,
+            dst.risk_score AS risk,
+            reason,
+            s.ts AS ts
+        ORDER BY s.ts DESC
+        LIMIT 50
+        """
+
+        return [
+            {
+                "account": r["account"],
+                "community": r["community"],
+                "fanin": r["fanin"],
+                "amount": r["amount"],
+                "channel": r["channel"],
+                "risk": r["risk"],
+                "reason": r["reason"],
+                "ts": str(r["ts"]),
+            }
+            for r in session.run(query)
+        ]
