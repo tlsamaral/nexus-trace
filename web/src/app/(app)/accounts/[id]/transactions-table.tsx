@@ -23,9 +23,9 @@ import { IconAlertTriangle, IconMinus } from "@tabler/icons-react"
 interface Tx {
   id: number | null
   dst: number
-  amount: number
+  amount: string
   channel?: string | null
-  risk?: number | null
+  risk?: string | number
 }
 
 export function TransactionsTable({ data }: { data: Tx[] }) {
@@ -60,16 +60,11 @@ export function TransactionsTable({ data }: { data: Tx[] }) {
             )}
 
             {data.map((t) => {
-              const formattedAmount = t.amount.toLocaleString("pt-BR", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })
-
               return (
                 <TableRow key={t.id ?? Math.random()}>
                   <TableCell className="font-medium">{t.dst}</TableCell>
                   <TableCell className="font-semibold">
-                    R$ {formattedAmount}
+                    {t.amount}
                   </TableCell>
                   <TableCell>
                     {t.channel ? (
