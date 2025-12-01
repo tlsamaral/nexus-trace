@@ -66,7 +66,7 @@ function CommunityDetails({ community }: { community: Community }) {
         </div>
 
         <div className="pt-4 border-t">
-          <h3 className="text-sm font-semibold mb-2">Conclusão</h3>
+          {/* <h3 className="text-sm font-semibold mb-2">Conclusão</h3>
           {community.status === "Crítica" && (
             <p className="text-red-500 text-sm">
               🚨 Comunidade com forte indicação de atividade coordenada.
@@ -84,9 +84,9 @@ function CommunityDetails({ community }: { community: Community }) {
             <p className="text-green-600 text-sm">
               ✔ Nenhum comportamento fraudulento significativo detectado.
             </p>
-          )}
+          )} */}
 
-          <Button className="w-full mt-4">
+          <Button className="w-full mt-4" asChild>
             <Link href={`/communities/${community.id}`}>Mais detalhes</Link>
           </Button>
         </div>
