@@ -25,6 +25,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { FlaskConical } from "lucide-react"
 
 const data = {
   user: {
@@ -59,11 +60,11 @@ const data = {
       url: "/rules",
       icon: IconBolt,
     },
-    // {
-    //   title: "Analytics",
-    //   url: "/analytics",
-    //   icon: IconChartBar,
-    // },
+    {
+      title: "Simulador de Fraudes",
+      url: "/test-fraud",
+      icon: FlaskConical,
+    },
   ],
 
   navSecondary: [
@@ -93,11 +94,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="/">
-                {/* <img
-                  src="/logo.svg"
-                  alt="NexosTrace Logo"
-                  className="size-6"
-                /> */}
                 <span className="text-base font-semibold">NexusTrace</span>
               </a>
             </SidebarMenuButton>
