@@ -1,9 +1,15 @@
 "use client"
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts"
 
-export function CommunityDistributionPie({ data, colors }: { data: any[], colors: string[] }) {
+export function CommunityDistributionPie({
+  data,
+  colors
+}: {
+  data: any[]
+  colors: string[]
+}) {
   return (
     <Card>
       <CardHeader>
@@ -14,11 +20,37 @@ export function CommunityDistributionPie({ data, colors }: { data: any[], colors
       <CardContent className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
-            <Pie data={data} dataKey="value" outerRadius={100} label>
+            <Tooltip
+              formatter={(value: number, name: string) => [`${value}`, `${name}`]}
+              contentStyle={{
+                background: "hsl(0 0% 98%)",
+                borderRadius: "8px",
+                border: "1px solid hsl(0 0% 90%)",
+              }}
+            />
+
+            <Legend
+              verticalAlign="bottom"
+              height={40}
+              iconType="circle"
+              formatter={(value: string) => `${value}`}
+            />
+
+            <Pie
+              data={data}
+              dataKey="value"
+              nameKey="name"
+              outerRadius={110}
+              label={({ percent, name }) =>
+                `${name} (${(percent * 100).toFixed(0)}%)`
+              }
+              labelLine={true}
+            >
               {data.map((_, i) => (
                 <Cell key={i} fill={colors[i % colors.length]} />
               ))}
             </Pie>
+
           </PieChart>
         </ResponsiveContainer>
       </CardContent>
