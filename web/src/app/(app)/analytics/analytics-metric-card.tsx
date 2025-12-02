@@ -10,6 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Line, LineChart, ResponsiveContainer } from "recharts";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface AnalyticsMetricCardProps {
   title: string;
@@ -19,6 +20,7 @@ interface AnalyticsMetricCardProps {
   trendPositive?: boolean;
   icon: React.ReactNode;
   chartData?: { value: number }[]; 
+  isLoading?: boolean;
 }
 
 export function AnalyticsMetricCard({
@@ -29,12 +31,35 @@ export function AnalyticsMetricCard({
   trendPositive = true,
   icon,
   chartData = [],
+  isLoading = false,
 }: AnalyticsMetricCardProps) {
-  return (
-    <Card className="p-4 @container/card">
+  if (isLoading) {
+    return (
+      <Card className="p-4 @container/card justify-between">
       <CardHeader className="flex flex-row items-center justify-between p-0">
         <div>
           <CardDescription className="flex items-center gap-2 text-sm">
+            <Skeleton className="h-4 w-40" />
+          </CardDescription>
+
+          <CardTitle className="text-2xl font-semibold mt-1 tabular-nums @[350px]/card:text-3xl">
+            <Skeleton className="h-4 w-20" />
+          </CardTitle>
+        </div>
+      </CardHeader>
+
+      <CardFooter className="flex items-center justify-between p-0 pt-4 text-sm">
+        <Skeleton className="h-4 w-1/2" />
+      </CardFooter>
+    </Card>
+    )
+  }
+
+  return (
+    <Card className="p-4 @container/card justify-between">
+      <CardHeader className="flex flex-row items-center justify-between p-0">
+        <div>
+          <CardDescription className="flex items-center gap-2 text-xs">
             <span className="text-muted-foreground">{icon}</span>
             {title}
           </CardDescription>
@@ -59,8 +84,8 @@ export function AnalyticsMetricCard({
         </div>
       </CardHeader>
 
-      <CardFooter className="flex items-center justify-between p-0 pt-4 text-sm">
-        <div className="text-muted-foreground">{subtitle}</div>
+      <CardFooter className="flex items-center justify-between p-0 pt-4">
+        <div className="text-muted-foreground text-sm pr-8">{subtitle}</div>
 
         {trend && (
           <Badge
