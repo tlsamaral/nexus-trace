@@ -40,6 +40,7 @@ import {
 } from "@tabler/icons-react"
 import { Transaction } from "@/http/transactions/get-transactions"
 import dayjs from "dayjs"
+import Link from "next/link"
 
 function TransactionDetails({ tx }: { tx: Transaction }) {
   return (
@@ -98,26 +99,40 @@ function TransactionDetails({ tx }: { tx: Transaction }) {
         </div>
 
         <div className="pt-4 border-t">
+          <div className="flex justify-between">
+            <span>Suspeita:</span>
+            {tx.suspicious ? (
+              <span className="text-red-500 font-medium flex items-center gap-1">
+                <IconAlertTriangle size={16} /> Sim
+              </span>
+            ) : (
+              <span className="text-green-600 font-medium flex items-center gap-1">
+                <IconCircleCheck size={16} /> Não
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="pt-4 border-t">
           <h3 className="text-sm font-semibold mb-2">Análise de Fraude</h3>
 
-          {tx.risk >= 80 && (
+          {tx.suspicious ? (
             <p className="text-red-500 text-sm">
-              🚨 Alto risco: comportamento fortemente anômalo, possível fraude.
+              🚨 Esta transação foi marcada como suspeita pelo motor de comportamento.
+              Isso pode ter ocorrido devido a:  
+              • valor alto,  
+              • fan-in elevado,  
+              • risco da conta destino ≥ 85.
             </p>
-          )}
-
-          {tx.risk >= 50 && tx.risk < 80 && (
-            <p className="text-yellow-600 text-sm">
-              ⚠ Risco moderado: valores ou padrões suspeitos, exige revisão.
-            </p>
-          )}
-
-          {tx.risk < 50 && (
+          ) : (
             <p className="text-green-600 text-sm">
-              ✔ Transação dentro do comportamento esperado.
+              ✔ Nenhum padrão de fraude detectado nesta transação.
             </p>
           )}
         </div>
+
+        <Button className="w-full" asChild>
+          <Link href={`/transactions/${tx.id}`}>Ver completo</Link>
+        </Button>
       </div>
     </SheetContent>
   )
@@ -162,6 +177,25 @@ export const columns: ColumnDef<Transaction>[] = [
     cell: ({ row }) => (
       <Badge variant="secondary">{row.original.channel.toUpperCase()}</Badge>
     )
+  },
+  {
+  accessorKey: "suspicious",
+  header: "Suspeita",
+  cell: ({ row }) => {
+    const s = row.original.suspicious
+
+    return s ? (
+      <Badge variant="destructive" className="flex items-center gap-1">
+        <IconAlertTriangle size={14} />
+        Sim
+      </Badge>
+      ) : (
+        <Badge variant="secondary" className="flex items-center gap-1">
+          <IconCircleCheck size={14} />
+          Não
+        </Badge>
+      )
+    }
   },
   {
     accessorKey: "risk",
