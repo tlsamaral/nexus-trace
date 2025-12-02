@@ -16,6 +16,7 @@ from routers.graph import router as graph_router
 from routers.transactions import router as transactions_router
 from routers.communities import router as communities_router
 from routers.analytics import router as analytics_router
+from routers.tests import router as tests_fraud_router
 
 
 from gds_initializer import compute_graph_features
@@ -106,6 +107,7 @@ app.include_router(graph_router,   prefix="/graph",   tags=["Graph"])
 app.include_router(transactions_router, prefix="/transactions", tags=["Transactions"])
 app.include_router(communities_router, prefix="/communities", tags=["Communities"])
 app.include_router(analytics_router, prefix="/analytics", tags=["Analytics"])
+app.include_router(tests_fraud_router, prefix="/tests", tags=["Tests"])
 
 
 if __name__ == "__main__":
