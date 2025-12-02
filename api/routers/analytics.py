@@ -140,3 +140,69 @@ def get_analytics():
             "community_distribution": community_distribution,
             "top_suspicious": top_suspicious,
         }
+
+@router.get("/overview")
+def analytics_overview():
+    with get_driver().session() as session:
+
+        query = """
+        // =======================
+        // RISCO MÉDIO (HOJE)
+        // =======================
+        CALL {
+            MATCH (a:Account)-[t:SENT]->()
+            WHERE date(t.ts) = date()
+            RETURN avg(a.risk_score) AS risco_medio_hoje
+        }
+
+        // =======================
+        // TOTAL DE TRANSAÇÕES (HOJE)
+        // =======================
+        CALL {
+            MATCH (:Account)-[t:SENT]->()
+            WHERE date(t.ts) = date()
+            RETURN count(t) AS total_transacoes_hoje
+        }
+
+        // =======================
+        // SUSPEITAS (VALOR ≥ 8000, FANIN ALTO OU RISCO >= 85)
+        // =======================
+        CALL {
+            MATCH (src)-[t:SENT]->(dst)
+            WHERE date(t.ts) = date()
+            
+            OPTIONAL MATCH ()-[r:SENT]->(dst)
+            WITH t, dst, count(r) AS fanin
+
+            WITH t,
+                CASE
+                    WHEN t.amount >= 8000 OR fanin >= 20 OR dst.risk_score >= 85
+                        THEN 1 ELSE 0
+                END AS suspicious
+
+            RETURN sum(suspicious) AS suspeitas_hoje
+        }
+
+        // =======================
+        // TOTAL DE COMUNIDADES
+        // =======================
+        CALL {
+            MATCH (a:Account)
+            RETURN count(DISTINCT a.community) AS total_comunidades
+        }
+
+        RETURN
+            risco_medio_hoje,
+            total_transacoes_hoje,
+            suspeitas_hoje,
+            total_comunidades
+        """
+
+        row = session.run(query).single()
+
+        return {
+            "risk_today": row["risco_medio_hoje"] or 0,
+            "transactions_today": row["total_transacoes_hoje"] or 0,
+            "suspicions_today": row["suspeitas_hoje"] or 0,
+            "communities": row["total_comunidades"] or 0,
+        }
