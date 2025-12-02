@@ -11,6 +11,7 @@ export const TransactionSchema = z.object({
   ts: z.string(),
   channel: ChannelEnum,
   risk: z.number(),
+  suspicious: z.boolean(),
   community_src: z.number().nullable(),
   community_dst: z.number().nullable(),
 })
