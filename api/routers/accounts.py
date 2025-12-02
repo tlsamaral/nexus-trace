@@ -115,7 +115,7 @@ def account_summary(id: int):
     RETURN
         a.id AS id,
         a.community AS community,
-        coalesce(avg(s.amount), 0) AS risk_avg,
+        (a.risk_score) AS risk_avg,     // 🔥 risco corrigido
         count(r) AS fanin,
         count(s) AS fanout,
         coalesce(sum(s.amount), 0) AS volume24h,
@@ -126,8 +126,8 @@ def account_summary(id: int):
         rec = session.run(query, id=id).single()
         if not rec:
             raise HTTPException(status_code=404, detail="Account not found")
+        
         return rec.data()
-
 
 # ============================================================
 # 🔵 ROTA NOVA 2: HISTÓRICO DE RISCO (RiskHistoryChart)
