@@ -5,7 +5,7 @@ import { api } from "../api-client"
 export interface Account {
   id: number
   community: number
-  risk_avg: number
+  risk_24h: number
   fanin: number
   fanout: number
   volume24h: number
