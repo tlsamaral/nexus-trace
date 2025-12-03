@@ -15,7 +15,7 @@ import { z } from "zod"
 export const accountSchema = z.object({
   id: z.number(),
   community: z.number(),
-  risk_avg: z.number(),
+  risk_24h: z.number(),
   fanin: z.number(),
   fanout: z.number(),
   volume24h: z.number(),
@@ -60,15 +60,9 @@ function AccountDetails({ acc }: { acc: Account }) {
       </SheetHeader>
 
       <div className="space-y-4 text-sm p-4">
-
         <div className="flex justify-between">
           <span>Comunidade:</span>
           <Badge>{acc.community}</Badge>
-        </div>
-
-        <div className="flex justify-between">
-          <span>Risco médio (24h):</span>
-          <span className="font-medium">{acc.risk_avg}</span>
         </div>
 
         <div className="flex justify-between">
@@ -83,12 +77,32 @@ function AccountDetails({ acc }: { acc: Account }) {
 
         <div className="flex justify-between">
           <span>Volume (24h):</span>
-          <span className="font-medium">R$ {acc.volume24h.toLocaleString()}</span>
+          <span className="font-medium">
+            R$ {acc.volume24h.toLocaleString()}
+          </span>
         </div>
 
         <div className="flex justify-between">
           <span>Última atividade:</span>
           <span className="font-medium">{acc.lastActivity}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Risco médio (24h):</span>
+          <span className="font-medium">
+            {acc.risk_24h}%
+          </span>
+        </div>
+
+        <div className="p-3 text-xs bg-muted/60 rounded-lg leading-relaxed border">
+          O <strong>risco</strong> é um score calculado automaticamente pelo motor antifraude,
+          baseado em três fatores principais:
+          <br /><br />
+          • <strong>Z-score do volume</strong>: detecta aumento anormal no valor movimentado.  
+          • <strong>Atividade nas últimas 24h</strong>: número de transações recentes.  
+          • <strong>Envios fora da comunidade</strong>: mede destinos incomuns para esta conta.  
+          <br /><br />
+          O valor final varia entre <strong>0 e 100</strong>, onde números próximos de 100 indicam
+          comportamento altamente atípico ou suspeito.
         </div>
 
         <Button
@@ -101,6 +115,7 @@ function AccountDetails({ acc }: { acc: Account }) {
     </SheetContent>
   )
 }
+
 
 export const accountColumns: ColumnDef<Account>[] = [
   {
@@ -124,7 +139,7 @@ export const accountColumns: ColumnDef<Account>[] = [
     accessorKey: "risk_avg",
     header: "Risco 24h",
     cell: ({ row }) => {
-      const r = row.original.risk_avg
+      const r = row.original.risk_24h
       return (
         <Badge
           variant={
