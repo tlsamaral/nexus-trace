@@ -17,7 +17,7 @@ from routers.transactions import router as transactions_router
 from routers.communities import router as communities_router
 from routers.analytics import router as analytics_router
 from routers.tests import router as tests_fraud_router
-
+from routers.ai import router as ai_router
 
 from gds_initializer import compute_graph_features
 from utils.wait_for_neo4j import wait_for_neo4j
@@ -108,6 +108,7 @@ app.include_router(transactions_router, prefix="/transactions", tags=["Transacti
 app.include_router(communities_router, prefix="/communities", tags=["Communities"])
 app.include_router(analytics_router, prefix="/analytics", tags=["Analytics"])
 app.include_router(tests_fraud_router, prefix="/tests", tags=["Tests"])
+app.include_router(ai_router, prefix="/ai", tags=["Ai"])
 
 
 if __name__ == "__main__":
