@@ -36,23 +36,88 @@ class TransactionRecord(BaseModel):
 def list_accounts():
     q = """
     MATCH (a:Account)
-    OPTIONAL MATCH (a)-[s:SENT]->()
+    OPTIONAL MATCH (a)-[t:SENT]->(dst)
     OPTIONAL MATCH ()-[r:SENT]->(a)
+
+    // --- Coleta transações com dados importantes
+    WITH 
+        a,
+        collect({amount: t.amount, ts: t.ts, community: dst.community}) AS txs,
+        count(r) AS fanin,
+        count(t) AS fanout,
+        sum(t.amount) AS total_volume,
+        avg(t.amount) AS hist_avg,
+        stdev(t.amount) AS hist_std
+
+    // --- Filtra transações nas últimas 24h
+    WITH
+        a, fanin, fanout, total_volume, hist_avg, hist_std,
+        [tx IN txs WHERE tx.ts >= datetime() - duration('PT24H')] AS tx24
+
+    // --- Valores das últimas 24h
+    WITH
+        a, fanin, fanout, total_volume, hist_avg, hist_std,
+        tx24,
+        [tx IN tx24 | tx.amount] AS amounts24,
+        [tx IN tx24 | tx.community] AS comms24
+
+    // --- Calcula soma e contagem
+    WITH
+        a, fanin, fanout, hist_avg, hist_std,
+        reduce(s = 0.0, x IN amounts24 | s + x) AS volume24h,
+        size(amounts24) AS count24,
+        comms24
+
+    // --- Percentual de destinos fora da comunidade dela
+    WITH 
+        a, fanin, fanout, hist_avg, hist_std, volume24h, count24,
+        CASE 
+            WHEN size(comms24) = 0 THEN 0
+            ELSE size([c IN comms24 WHERE c <> a.community]) * 1.0 / size(comms24)
+        END AS uncommon_percent
+
+    // --- Z-score do volume (comparado ao histórico)
+    WITH 
+        a, fanin, fanout, volume24h, count24, uncommon_percent,
+        CASE 
+            WHEN hist_std = 0 THEN 0
+            ELSE (volume24h - hist_avg) / hist_std
+        END AS z
+
+    // --- Score final (sem usar min(list))
+    WITH
+        a,
+        fanin,
+        fanout,
+        volume24h,
+        // z_score: 0 se z <= 0, senão z*15 limitado a 60
+        CASE 
+            WHEN z <= 0 THEN 0
+            WHEN z * 15 >= 60 THEN 60
+            ELSE z * 15
+        END AS z_score,
+        // activity_score: count24*2 limitado a 20
+        CASE 
+            WHEN count24 * 2 >= 20 THEN 20
+            ELSE count24 * 2
+        END AS activity_score,
+        uncommon_percent * 20 AS community_score
+        
     RETURN
         a.id AS id,
         a.community AS community,
-        coalesce(avg(s.amount), 0) AS risk_avg,
-        count(r) AS fanin,
-        count(s) AS fanout,
-        coalesce(sum(s.amount), 0) AS volume24h,
+        round(z_score + activity_score + community_score, 2) AS risk_24h,
+        fanin,
+        fanout,
+        volume24h,
         toString(a.lastActivity) AS lastActivity
     ORDER BY id ASC
     """
+    
     with get_driver().session() as session:
         res = session.run(q)
         return [record.data() for record in res]
-
-
+        
 # ------------------------------------------------------------
 # DETALHES (NÃO MEXER)
 # ------------------------------------------------------------
