@@ -56,50 +56,6 @@ async def startup_event():
 def health():
     return {"ok": True}
 
-
-@app.post("/transaction")
-async def analyze_transaction(tx: Transaction):
-    result = score_transaction(tx.src_account, tx.dst_account, tx.amount)
-    risk = result["risk"]
-
-    payload = {
-        "type": "TRANSACTION",
-        "src_account": tx.src_account,
-        "dst_account": tx.dst_account,
-        "amount": tx.amount,
-        "risk": risk,
-        "explanation": result["explanation"]
-    }
-
-    # enviar evento para o painel em tempo real
-    await manager.broadcast(payload)
-
-    # alertar fraude
-    if risk >= RISK_THRESHOLD:
-        await manager.broadcast({
-            "type": "ALERT",
-            "title": "🚨 Fraude detectada",
-            "message": f"{tx.src_account} → {tx.dst_account} | R${tx.amount:.2f} | risco {risk}",
-            "risk": risk,
-            "tx": payload
-        })
-
-    return {
-        "fraud": risk >= RISK_THRESHOLD,
-        "risk": risk,
-        "explanation": result["explanation"]
-    }
-
-
-@app.websocket("/ws")
-async def ws_endpoint(websocket: WebSocket):
-    await manager.connect(websocket)
-    try:
-        while True:
-            await websocket.receive_text()  # apenas para manter conexão
-    except WebSocketDisconnect:
-        manager.disconnect(websocket)
-
 app.include_router(accounts_router, prefix="/account", tags=["Accounts"])
 app.include_router(metrics_router, prefix="/metrics", tags=["Metrics"])
 app.include_router(rules_router,   prefix="/rules",   tags=["Rules"])
