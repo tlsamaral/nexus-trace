@@ -68,13 +68,12 @@ def tool_test_generate_data():
     from routers.tests import get_test_data
     return get_test_data()
 
-def tool_test_transaction(origin_id: int, dest_id: int, amount: float, threshold: float):
+def tool_test_transaction(origin_id: int, dest_id: int, amount: float):
     from routers.tests import test_transaction
     payload = {
         "origin_id": origin_id,
         "dest_id": dest_id,
-        "amount": amount,
-        "threshold": threshold
+        "amount": amount
     }
     return test_transaction(payload)
 # ============================================================
@@ -160,10 +159,9 @@ TOOLS = [
             "properties": {
                 "origin_id": { "type": "integer" },
                 "dest_id": { "type": "integer" },
-                "amount": { "type": "number" },
-                "threshold": { "type": "number" }
+                "amount": { "type": "number" }
             },
-            "required": ["origin_id", "dest_id", "amount", "threshold"]
+            "required": ["origin_id", "dest_id", "amount"]
         }
     }
 ]
@@ -287,7 +285,7 @@ def ask_ai(user_message: str):
               Nunca responda apenas dados crus.
               Sempre gere uma explicação profissional, incluindo interpretações, implicações e possíveis alertas, porém não precisa parecer um robô falando, pode ser profissional mas com um tom mais descontraído.
 
-              Quando o retorno for para Analise de risco simulada, remove informaçoes de threshold, não faça recomendações que vá além do contexto de teste.
+              Quando o retorno for para Analise de risco simulada.
 
               Sempre use markdown estilizado com espaámento de 2.
             """

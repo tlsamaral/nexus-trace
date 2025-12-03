@@ -1,76 +1,164 @@
 from fastapi import APIRouter
 from neo4j_client import get_driver
-import random
 
 router = APIRouter(tags=["Fraud Test"])
 
 
-# ---------------------------------------------------
-# 🔵 1) ROTA — Gera cenário de teste
-# ---------------------------------------------------
+# ============================================================
+# 🔵 FUNÇÃO AUXILIAR — Calcula métricas reais entre duas contas
+# ============================================================
+def calculate_real_threshold(session, origin_id: int, dest_id: int):
+    q = """
+    MATCH (o:Account {id: $origin_id})-[t:SENT]->(d:Account {id: $dest_id})
+    RETURN avg(t.amount) AS avg, stdev(t.amount) AS std, count(t) AS total
+    """
+    rec = session.run(q, {"origin_id": origin_id, "dest_id": dest_id}).single()
+
+    if not rec or rec["total"] == 0:
+        return {
+            "avg": 0,
+            "std": 0,
+            "threshold": 0,
+            "total": 0,
+        }
+
+    avg = rec["avg"] or 0
+    std = rec["std"] or 0
+
+    # threshold real com base na dispersão dos valores
+    threshold = avg + (std * 2.5)
+
+    return {
+        "avg": avg,
+        "std": std,
+        "threshold": threshold,
+        "total": rec["total"],
+    }
+
+
+# ============================================================
+# 🔵 1) ROTA — Gera cenário REAL de teste
+# ============================================================
+from fastapi import APIRouter
+from neo4j_client import get_driver
+from neo4j.time import DateTime, Date, Time  # necessário para limpar objetos do Neo4j
+
+router = APIRouter(tags=["Fraud Test"])
+
+
 @router.get("/data")
 def get_test_data():
     with get_driver().session() as session:
 
-        # escolhe 2 contas aleatórias
+        # Seleciona o par de contas com mais transações entre si
         q = """
-        MATCH (a:Account)
-        RETURN a.id AS id, a.community AS community, a.risk_score AS risk
-        ORDER BY rand()
-        LIMIT 2
+        MATCH (a:Account)-[t:SENT]->(b:Account)
+        WITH a, b, count(t) AS freq
+        WITH a, b, freq, rand() * freq AS score
+        ORDER BY score DESC
+        LIMIT 1
+        RETURN a AS origin, b AS dest
         """
-        accounts = [r.data() for r in session.run(q)]
+        rec = session.run(q).single()
 
-        origin = accounts[0]
-        dest = accounts[1]
+        if not rec:
+            return {"error": "Não há dados suficientes no grafo para gerar cenário de teste."}
 
-        # threshold aleatório para simulação
-        threshold = random.choice([1000, 2000, 3000, 5000, 8000])
+        # =====================================================
+        # 🔵 LIMPA propriedades Neo4j (DateTime, Date, Time etc)
+        # =====================================================
 
+        def clean(value):
+            if isinstance(value, (DateTime, Date, Time)):
+                return value.iso_format()
+            if isinstance(value, dict):
+                return {k: clean(v) for k, v in value.items()}
+            if isinstance(value, list):
+                return [clean(v) for v in value]
+            return value
+
+        origin = clean(rec["origin"]._properties)
+        dest = clean(rec["dest"]._properties)
+
+        # =====================================================
+        # 🔵 CALCULA threshold REAL inline
+        # =====================================================
+
+        q2 = """
+        MATCH (o:Account {id: $origin})-[t:SENT]->(d:Account {id: $dest})
+        RETURN avg(t.amount) AS avg, stdev(t.amount) AS std, count(t) AS total
+        """
+
+        rec2 = session.run(q2, {
+            "origin": origin["id"],
+            "dest": dest["id"]
+        }).single()
+
+        avg = rec2["avg"] or 0
+        std = rec2["std"] or 0
+        total = rec2["total"] or 0
+
+        threshold = avg + (std * 2.5) if total > 0 else 0
+
+        # =====================================================
+        # 🔵 MONTA explicação
+        # =====================================================
         explain = (
-            "Este valor foi gerado como limite artificial para simulação de fraude. "
-            "Transações iguais ou superiores ao threshold são marcadas como suspeitas "
-            "porque valores altos geralmente indicam comportamento atípico."
+            f"O threshold foi calculado com base nas transações reais entre as contas "
+            f"{origin['id']} e {dest['id']}. "
+            f"A média dos valores é R$ {avg:,.2f} e o desvio padrão é R$ {std:,.2f}. "
+            f"Threshold = média + 2.5 × desvio padrão."
         )
 
+        # =====================================================
+        # 🔵 RETORNO FINAL
+        # =====================================================
         return {
             "origin": origin,
             "dest": dest,
+            "mean": avg,
+            "std_dev": std,
             "threshold": threshold,
-            "explain": explain
+            "total_transactions_analyzed": total,
+            "explain": explain,
         }
 
-
-# ---------------------------------------------------
-# 🔵 2) ROTA — Testa transação simulada
-# ---------------------------------------------------
+# ============================================================
+# 🔵 2) ROTA — Testa transação REAL (sem enviar threshold)
+# ============================================================
 @router.post("/transaction")
 def test_transaction(payload: dict):
     origin_id = payload["origin_id"]
     dest_id = payload["dest_id"]
     value = float(payload["amount"])
-    threshold = float(payload["threshold"])
 
-    # regra simples de risco
+    with get_driver().session() as session:
+        # Calcula threshold real novamente
+        metrics = calculate_real_threshold(session, origin_id, dest_id)
+        threshold = metrics["threshold"]
+
     risk = 0
-
-    # quanto maior o valor acima do limite → mais risco
-    if value >= threshold:
-        risk += min(70 + ((value - threshold) / threshold) * 30, 100)
-
-    # risco adicional baseado na distância de comunidades
-    if abs(origin_id - dest_id) > 200:
-        risk += 10
-
-    is_fraud = risk >= 70
-
     explain = []
 
-    if value >= threshold:
-        explain.append(f"Valor enviado (R$ {value:,.2f}) é maior que o threshold definido (R$ {threshold:,.2f}).")
+    # Regras reais de fraude
+    if threshold > 0 and value >= threshold:
+        explain.append(
+            f"Valor enviado (R$ {value:,.2f}) é maior que o threshold histórico (R$ {threshold:,.2f})."
+        )
+        risk += min(70 + ((value - threshold) / threshold) * 30, 100)
+    else:
+        explain.append(
+            f"Valor enviado está dentro do comportamento histórico entre as contas "
+            f"(média ~ R$ {metrics['avg']:,.2f})."
+        )
 
+    # Risco pela distância das comunidades
     if abs(origin_id - dest_id) > 200:
+        risk += 10
         explain.append("Diferença entre contas sugere baixa afinidade transacional.")
+
+    # Classificação final
+    is_fraud = risk >= 70
 
     if is_fraud:
         explain.append("Score final ultrapassou 70%, sendo classificado como fraude.")
@@ -78,7 +166,16 @@ def test_transaction(payload: dict):
         explain.append("Score final ficou abaixo do limite de risco.")
 
     return {
+        "origin_id": origin_id,
+        "dest_id": dest_id,
+        "amount": value,
         "risk": round(min(risk, 100), 2),
         "fraud": is_fraud,
-        "explain": explain
+        "threshold_used": threshold,
+        "stats": {
+            "mean": metrics["avg"],
+            "std_dev": metrics["std"],
+            "transactions_analyzed": metrics["total"],
+        },
+        "explain": explain,
     }
