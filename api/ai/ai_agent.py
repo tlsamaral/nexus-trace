@@ -57,10 +57,26 @@ def tool_get_transaction_details(tx_id: int):
                 b.community AS community_dst
         """, {"id": tx_id}).single()
 
-        return rec.data() if rec else {"error": "Transação não encontrada."}
+        data = rec.data()
 
+        if "ts" in data and hasattr(data["ts"], "iso_format"):
+            data["ts"] = data["ts"].iso_format()
 
+        return data
 
+def tool_test_generate_data():
+    from routers.tests import get_test_data
+    return get_test_data()
+
+def tool_test_transaction(origin_id: int, dest_id: int, amount: float, threshold: float):
+    from routers.tests import test_transaction
+    payload = {
+        "origin_id": origin_id,
+        "dest_id": dest_id,
+        "amount": amount,
+        "threshold": threshold
+    }
+    return test_transaction(payload)
 # ============================================================
 # 2) DEFINIÇÃO DAS TOOLS
 # ============================================================
@@ -125,6 +141,30 @@ TOOLS = [
             },
             "required": ["tx_id"]
         }
+    },
+    {
+        "type": "function",
+        "name": "generateTestScenario",
+        "description": "Gera duas contas aleatórias e um threshold para simulação de fraude.",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "type": "function",
+        "name": "simulateTransaction",
+        "description": "Simula uma transação de teste e calcula risco.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "origin_id": { "type": "integer" },
+                "dest_id": { "type": "integer" },
+                "amount": { "type": "number" },
+                "threshold": { "type": "number" }
+            },
+            "required": ["origin_id", "dest_id", "amount", "threshold"]
+        }
     }
 ]
 
@@ -147,6 +187,20 @@ Sempre que ler:
 - "predição da conta X" → getAccountPrediction(id=X)
 - "transações da conta X" → getAccountTransactions(id=X)
 - "transação X" → getTransactionDetails(tx_id=X)
+
+Comandos de testes:
+- "gerar cenário de teste"
+- "simular transação"
+- "criar cenário"
+- "testar transação de 100 para contas x e y"
+- "simular transferência de 5000 da conta 10 para a 300"
+
+Mapeamentos:
+- cenário de teste → generateTestScenario()
+- simulação de transação → simulateTransaction()
+
+Use regex para extrair números.
+Quando não houver dados suficientes, peça os valores faltantes (origin_id, dest_id, amount) se o threshold não for fornecido no comando calcule com um aleatorio entre: 1000, 2000, 3000, 5000, 8000.
 
 Extraia o número com regex.
 Você precisa retornas no arguments os parametros da tool.
@@ -194,6 +248,8 @@ def ask_ai(user_message: str):
             "getAccountPrediction": tool_get_account_prediction,
             "getAccountTransactions": tool_get_account_transactions,
             "getTransactionDetails": tool_get_transaction_details,
+            "generateTestScenario": tool_test_generate_data,
+            "simulateTransaction": tool_test_transaction,
         }[name]
 
         result = fn(**args)
@@ -225,9 +281,15 @@ def ask_ai(user_message: str):
               - getAccountPrediction → gere uma ANÁLISE DE RISCO FUTURO
               - getAccountTransactions → gere um RESUMO DE TRANSACOES
               - getTransactionDetails → gere um DETALHAMENTO DE TRANSACAO
+              - generateTestScenario → explique o cenário gerado e o que cada dado significa.
+              - simulateTransaction → gere uma análise de risco detalhada, explique o cálculo e mostre se seria fraude.
 
               Nunca responda apenas dados crus.
-              Sempre gere uma explicação profissional, incluindo interpretações, implicações e possíveis alertas.
+              Sempre gere uma explicação profissional, incluindo interpretações, implicações e possíveis alertas, porém não precisa parecer um robô falando, pode ser profissional mas com um tom mais descontraído.
+
+              Quando o retorno for para Analise de risco simulada, remove informaçoes de threshold, não faça recomendações que vá além do contexto de teste.
+
+              Sempre use markdown estilizado com espaámento de 2.
             """
         )
 
@@ -238,5 +300,5 @@ def ask_ai(user_message: str):
     # ========================================================
     if out.type == "message":
         return out.content[0].text
-
+    print("🤖 ERRO →", out)
     return f"[ERRO] Tipo inesperado: {out.type}"
