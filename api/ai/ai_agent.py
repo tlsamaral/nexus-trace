@@ -223,8 +223,10 @@ def ask_ai(user_message: str):
         tools=TOOLS,
         tool_choice="auto"
     )
+    print("🤖 RESPOSTA →", response)
 
     input_list += response.output
+
 
     out = response.output[0]
     print("🤖 RESPOSTA →", out)
@@ -250,7 +252,11 @@ def ask_ai(user_message: str):
             "simulateTransaction": tool_test_transaction,
         }[name]
 
-        result = fn(**args)
+        try:
+            result = fn(**args)
+        except Exception as e:
+            print("❌ ERRO NA TOOL:", name, "→", e)
+            return {"error": f"Erro interno ao executar {name}: {str(e)}"}
 
         # ========================================================
         # 3) SEGUNDA CHAMADA → devolvendo resultado da tool

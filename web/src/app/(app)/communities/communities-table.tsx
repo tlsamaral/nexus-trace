@@ -134,25 +134,25 @@ export const columns: ColumnDef<Community>[] = [
       <span className="font-medium">{row.original.avg_risk}</span>
     ),
   },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const s = row.original.status
+  // {
+  //   accessorKey: "status",
+  //   header: "Status",
+  //   cell: ({ row }) => {
+  //     const s = row.original.status
 
-      return (
-        <Badge
-          variant={s === "Crítica" ? "destructive" :
-                   s === "Suspeita" ? "outline" : "secondary"}
-        >
-          {s === "Crítica" && <IconAlertTriangle size={14} className="mr-1" />}
-          {s === "Suspeita" && <IconAlertTriangle size={14} className="mr-1" />}
-          {s === "Normal" && <IconCircleCheck size={14} className="mr-1" />}
-          {s}
-        </Badge>
-      )
-    },
-  },
+  //     return (
+  //       <Badge
+  //         variant={s === "Crítica" ? "destructive" :
+  //                  s === "Suspeita" ? "outline" : "secondary"}
+  //       >
+  //         {s === "Crítica" && <IconAlertTriangle size={14} className="mr-1" />}
+  //         {s === "Suspeita" && <IconAlertTriangle size={14} className="mr-1" />}
+  //         {s === "Normal" && <IconCircleCheck size={14} className="mr-1" />}
+  //         {s}
+  //       </Badge>
+  //     )
+  //   },
+  // },
   {
     id: "details",
     header: "Ações",

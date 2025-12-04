@@ -25,6 +25,7 @@ import { formatCurrency, formatDate, formatInt, formatRisk } from "./account-for
 import { Anomaly, getAccountAnomalies } from "@/http/accounts/get-account-anomalies"
 import { Explainability, getAccountExplainability } from "@/http/accounts/get-account-explainability"
 import { getAccountTimeline, Timeline } from "@/http/accounts/get-account-timeline"
+import { Loader } from "lucide-react"
 
 export function AccountInner({ accountId }: { accountId: string }) {
   const [summary, setSummary] = useState<AccountSummary | null>(null)
@@ -63,7 +64,11 @@ export function AccountInner({ accountId }: { accountId: string }) {
   }, [accountId])
 
   if (loading || !summary || !graph) {
-    return <div className="py-10 text-center text-muted-foreground">Carregando…</div>
+    return (
+      <div className="h-full w-full flex items-center justify-center"> 
+          <Loader className="animate-spin size-6" />
+      </div>
+    )
   }
 
   const formattedSummary = {

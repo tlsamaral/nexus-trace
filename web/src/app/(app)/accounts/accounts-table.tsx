@@ -135,25 +135,25 @@ export const accountColumns: ColumnDef<Account>[] = [
       <Badge variant="outline">{row.original.community}</Badge>
     ),
   },
-  {
-    accessorKey: "risk_avg",
-    header: "Risco 24h",
-    cell: ({ row }) => {
-      const r = row.original.risk_24h
-      return (
-        <Badge
-          variant={
-            r >= 80 ? "destructive" :
-            r >= 50 ? "outline" : "secondary"
-          }
-        >
-          {r >= 80 && <IconAlertTriangle size={14} className="mr-1" />}
-          {r < 50 && <IconChecks size={14} className="mr-1" />}
-          {r}
-        </Badge>
-      )
-    },
-  },
+  // {
+  //   accessorKey: "risk_avg",
+  //   header: "Risco 24h",
+  //   cell: ({ row }) => {
+  //     const r = row.original.risk_24h
+  //     return (
+  //       <Badge
+  //         variant={
+  //           r >= 80 ? "destructive" :
+  //           r >= 50 ? "outline" : "secondary"
+  //         }
+  //       >
+  //         {r >= 80 && <IconAlertTriangle size={14} className="mr-1" />}
+  //         {r < 50 && <IconChecks size={14} className="mr-1" />}
+  //         {r}
+  //       </Badge>
+  //     )
+  //   },
+  // },
   {
     accessorKey: "fanin",
     header: "Entradas",

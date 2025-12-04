@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nexos Trace",
-  description: "Nexos Trace - Sistema de acompanhamento e análise de transações.",
+  title: "Nexus Trace",
+  description: "Nexus Trace - Sistema de acompanhamento e análise de transações.",
 };
 
 export default function RootLayout({

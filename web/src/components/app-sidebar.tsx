@@ -30,7 +30,7 @@ import { FlaskConical } from "lucide-react"
 const data = {
   user: {
     name: "Administrador",
-    email: "admin@nexostrace.com",
+    email: "admin@nexustrace.com",
     avatar: "",
   },
 

@@ -197,26 +197,26 @@ export const columns: ColumnDef<Transaction>[] = [
       )
     }
   },
-  {
-    accessorKey: "risk",
-    header: "Risco",
-    cell: ({ row }) => {
-      const r = row.original.risk
+  // {
+  //   accessorKey: "risk",
+  //   header: "Risco",
+  //   cell: ({ row }) => {
+  //     const r = row.original.risk
 
-      return (
-        <Badge
-          variant={
-            r >= 80 ? "destructive" :
-            r >= 50 ? "outline" : "secondary"
-          }
-        >
-          {r >= 80 && <IconAlertTriangle size={14} className="mr-1" />}
-          {r < 50 && <IconCircleCheck size={14} className="mr-1" />}
-          {r}
-        </Badge>
-      )
-    },
-  },
+  //     return (
+  //       <Badge
+  //         variant={
+  //           r >= 80 ? "destructive" :
+  //           r >= 50 ? "outline" : "secondary"
+  //         }
+  //       >
+  //         {r >= 80 && <IconAlertTriangle size={14} className="mr-1" />}
+  //         {r < 50 && <IconCircleCheck size={14} className="mr-1" />}
+  //         {r}
+  //       </Badge>
+  //     )
+  //   },
+  // },
   {
     id: "actions",
     header: "Ações",
