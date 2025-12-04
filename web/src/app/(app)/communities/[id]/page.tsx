@@ -12,13 +12,6 @@ export default async function CommunityDetailsPage({ params }: { params: Promise
   return (
     <div className="space-y-6 p-6">
       <div className="flex flex-col gap-4">
-        {/* <div>
-          <Button variant="outline">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Voltar
-          </Button>
-        </div> */}
-
         <div>
           <h1 className="text-3xl font-bold">Comunidade #{communityDetails.id}</h1>
           <p className="text-muted-foreground">
